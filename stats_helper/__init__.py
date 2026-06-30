@@ -61,13 +61,43 @@ def refresh_uuid_list(server: ServerInterface):
 						uuid_cache_time[player] = expired_time
 			except ValueError:
 				pass
-	uuid_list.update(uuid_file)
-	uuid_list.update(uuid_cache)
+
+	combined_uuid_list = {}
+	combined_uuid_list.update(uuid_file)
+	combined_uuid_list.update(uuid_cache)
+	uuid_list = deduplicate_uuid_list(combined_uuid_list, uuid_cache, uuid_cache_time)
 	save_uuid_list()
+
+	removed_count = len(combined_uuid_list) - len(uuid_list)
+	if removed_count > 0:
+		server.logger.info('Removed {} duplicated UUID mapping(s) caused by player name changes'.format(removed_count))
 
 	# compatibility
 	if os.path.isdir(os.path.dirname(constants.UUIDFilePrev)):
 		shutil.rmtree(os.path.dirname(constants.UUIDFilePrev))
+
+
+def deduplicate_uuid_list(player_uuid_map: Dict[str, str], uuid_cache: Dict[str, str], uuid_cache_time: Dict[str, Any]) -> Dict[str, str]:
+	'''Keep only one player name for each UUID.
+
+	When a Minecraft account changes name, usercache.json can contain the new
+	name while the plugin's saved uuid.json still contains the old one. Keeping
+	both makes ranks and scoreboards show duplicated statistics.
+	
+	Preference order:
+	1. Names currently present in usercache.json
+	2. The newest usercache entry for that UUID
+	3. Existing saved uuid.json entries as fallback
+	'''
+	canonical_by_uuid = {}
+	oldest_time = time.strptime('1970-01-01 00:00:00', '%Y-%m-%d %X')
+
+	for player, uuid in player_uuid_map.items():
+		priority = (1 if player in uuid_cache else 0, uuid_cache_time.get(player, oldest_time))
+		if uuid not in canonical_by_uuid or priority > canonical_by_uuid[uuid][1]:
+			canonical_by_uuid[uuid] = (player, priority)
+
+	return {player: uuid for uuid, (player, _priority) in canonical_by_uuid.items()}
 
 
 def save_uuid_list():
