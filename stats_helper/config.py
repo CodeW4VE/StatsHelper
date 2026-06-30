@@ -10,8 +10,12 @@ class Config(Serializable):
 	save_world_on_query: bool = False
 	save_world_on_rank: bool = False
 	save_world_on_scoreboard: bool = True
+	# Names matching any of these (re.fullmatch, case-insensitive) are treated
+	# as bots and excluded from ranks/scoreboards unless -bot is passed.
+	# Covers both bot-name conventions: a "bot" prefix and a "_bot" suffix
+	# (e.g. load_bot, Slime_BOT, bot_alice).
 	player_name_blacklist: List[str] = [
-		'^bot.*', 'Steve', 'Alex'
+		'^bot.*', 'bot_.*', '.*_bot', 'Steve', 'Alex'
 	]
 
 	def get_world_path(self) -> str:
