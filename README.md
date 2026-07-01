@@ -1,68 +1,70 @@
 StatsHelper
 -------
 
-一个统计信息助手的  [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) 插件，可查询/排名/使用计分板列出各类统计信息。
+An [MCDReforged](https://github.com/Fallen-Breath/MCDReforged) plugin for statistics: query, rank, and list all kinds of stats using scoreboards.
 
-适用版本：1.13以上服务器
+Supported versions: servers 1.13+
 
-# 格式说明
+> This is a fork maintained for [MineWave](https://w4ve.xyz/). See [MINEWAVE-FORK.md](MINEWAVE-FORK.md) for the changes made on top of the original [TISUnion/StatsHelper](https://github.com/TISUnion/StatsHelper).
 
-`!!stats` 显示帮助信息
+# Command format
 
-`!!stats save` <代名> <统计类别> <统计内容> <标题> 保存一个快速计分板
+`!!stats` Show the help message
 
-`!!stats del` <代名> 移除一个快速计分板
+`!!stats save` <alias> <stat_class> <stat_target> <title> Save a quick scoreboard
 
-`!!stats list` 列出已保存的快速计分板
- 
-`!!stats query` <玩家> <统计类别> <统计内容> [<-uuid>] [<-tell>]
+`!!stats del` <alias> Delete a quick scoreboard
 
-`!!stats query` <玩家> <代名> [<-uuid>] [<-tell>]
+`!!stats list` List the saved quick scoreboards
 
-`!!stats rank` <统计类别> <统计内容> (-bot) [<-tell>]
+`!!stats query` <player> <stat_class> <stat_target> [<-uuid>] [<-tell>]
 
-`!!stats rank` <代名> (-bot) [<-tell>]
+`!!stats query` <player> <alias> [<-uuid>] [<-tell>]
 
-`!!stats scoreboard` <统计类别> <统计内容> (标题) (-bot)
+`!!stats rank` <stat_class> <stat_target> (-bot) [<-tell>]
 
-`!!stats scoreboard` <代名> 显示一个快速计分板
+`!!stats rank` <alias> (-bot) [<-tell>]
 
-`!!stats scoreboard show` 显示该插件的计分板
+`!!stats scoreboard` <stat_class> <stat_target> (title) (-bot)
 
-`!!stats scoreboard hide` 隐藏该插件的计分板
+`!!stats scoreboard` <alias> Show a quick scoreboard
 
-## 参数说明
+`!!stats scoreboard show` Show this plugin's scoreboard
 
-<统计类别>: killed, killed_by, dropped, picked_up, used, mined, broken, crafted, custom, killed, killed_by 的 <统计内容> 为 [生物id]
+`!!stats scoreboard hide` Hide this plugin's scoreboard
 
-picked_up, used, mined, broken, crafted 的 <统计内容> 为物品/方块id
+## Arguments
 
-custom 的 <统计内容> 详见统计信息的json文件，或 [MC Wiki](https://minecraft.fandom.com/zh/wiki/%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
+<stat_class>: killed, killed_by, dropped, picked_up, used, mined, broken, crafted, custom. For killed and killed_by, <stat_target> is an [entity id].
 
-上述内容无需带minecraft前缀
+For picked_up, used, mined, broken and crafted, <stat_target> is an item/block id.
 
-[<-uuid>]: 用uuid替换玩家名; (-bot): 统计bot与cam; [<-tell>]: 仅自己可见
+For custom, see <stat_target> in the game's stats JSON files, or the [MC Wiki](https://minecraft.wiki/w/Statistics).
 
-## 例子
+None of the above need the `minecraft` prefix.
 
-`!!stats save fly custom aviate_one_cm 飞行榜`
+[<-uuid>]: use the UUID instead of the player name; (-bot): include bots and cameras; [<-tell>]: only visible to you.
+
+## Examples
+
+`!!stats save fly custom aviate_one_cm Flight`
 
 `!!stats query Fallen_Breath used water_bucket`
 
 `!!stats rank custom time_since_rest -bot`
 
-`!!stats scoreboard mined stone 挖石榜`
+`!!stats scoreboard mined stone Stone_mined`
 
-# 配置文件
+# Config file
 
-`server_path`: 服务端的工作路径
+`server_path`: the server's working directory.
 
-`world_folder`: 存档文件夹。存档因位于服务端的工作路径之中
+`world_folder`: the world save folder, located inside the server working directory.
 
-`save_world_on_query`: 是否在使用指令 `!!stats query` 时使用指令 `/save-all` 保存世界
+`save_world_on_query`: whether to run `/save-all` to save the world when `!!stats query` is used.
 
-`save_world_on_rank`: 是否在使用指令 `!!stats rank` 时使用指令 `/save-all` 保存世界
+`save_world_on_rank`: whether to run `/save-all` to save the world when `!!stats rank` is used.
 
-`save_world_on_scoreboard`: 是否在使用指令 `!!stats scoreboard` 时使用指令 `/save-all` 保存世界
+`save_world_on_scoreboard`: whether to run `/save-all` to save the world when `!!stats scoreboard` is used.
 
-`player_name_blacklist`: 一个字符串列表，储存着用于查询的玩家黑名单，位于其中的玩家不会被统计。每一个字符串均为一个正则表达式模式串，但一个玩家的名称被其中任意一个模式串匹配上时，该玩家将被忽略
+`player_name_blacklist`: a list of strings acting as a query blacklist; players in it are not counted. Each string is a regular expression, and a player is ignored when their name matches any of the patterns.

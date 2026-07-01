@@ -338,20 +338,20 @@ def register_command(server: PluginServerInterface):
 			RText(tr('command.unknown_scoreboard')).c(RAction.run_command, f'{constants.Prefix} list')
 		)).
 
-		# !!stats query [玩家] [统计类别] [统计内容] [<-args>]
-		# !!stats query [玩家] [保存的统计项] [<-args>]
+		# !!stats query [player] [stat_class] [stat_target] [<-args>]
+		# !!stats query [player] [saved_stat] [<-args>]
 		then(Literal('query').then(
 			Text('player').then(
 				exe(ScoreboardQuery('cls/alias', allow_all_tag=True), _show_stat)
 			)
 		)).
-		# !!stats rank [统计类别] [统计内容] [<-args>]
-		# !!stats rank [保存的统计项] [<-args>]
+		# !!stats rank [stat_class] [stat_target] [<-args>]
+		# !!stats rank [saved_stat] [<-args>]
 		then(Literal('rank').then(
 			exe(ScoreboardQuery('cls/alias', allow_all_tag=True), _show_rank)
 		)).
 		then(exe(Literal('list'), _list_quick_scoreboard)).
-		# !!stats save [要保存的统计项] [统计类别] [统计内容] [<标题>]
+		# !!stats save [saved_stat] [stat_class] [stat_target] [<title>]
 		then(Literal('save').then(
 			Text('alias').then(
 				Text('cls').then(
@@ -374,8 +374,8 @@ def register_command(server: PluginServerInterface):
 			Literal('scoreboard').
 			then(Literal('show').runs(lambda src: show_scoreboard(src.get_server()))).
 			then(Literal('hide').runs(lambda src: hide_scoreboard(src.get_server()))).
-			# !!stats scoreboard [统计类别] [统计内容] [<标题>] [<-args>]
-			# !!stats [保存的统计项] [<-args>]
+			# !!stats scoreboard [stat_class] [stat_target] [<title>] [<-args>]
+			# !!stats [saved_stat] [<-args>]
 			then(
 				ScoreboardQuery('cls/alias').
 				runs(lambda src, ctx: _build_scoreboard(ctx, None, Arguments.empty())).
